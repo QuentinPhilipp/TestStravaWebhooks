@@ -1,6 +1,9 @@
 var express = require('express');
 require('dotenv').config();
 var router = express.Router();
+var { getAthleteToken, isAthleteRegistered, isActivityInDatabase, storeDetailedActivity } = require('./databaseConfig.js');
+
+const axios = require('axios')
 
 /* GET api calls. */
 router.get('/', function(req, res, next) {
@@ -10,7 +13,7 @@ router.get('/', function(req, res, next) {
 // Strava webhooks
 // Creates the endpoint for our webhook
 router.post('/webhook', (req, res) => {
-    console.log("webhook event received!", req.query, req.body);
+    processCallback(req);
     res.status(200).send('EVENT_RECEIVED');
   });
 
@@ -37,5 +40,40 @@ router.get('/webhook', (req, res) => {
       }
     }
   });
+
+async function processCallback(req) {
+  console.log("webhook event received!", req.query, req.body);
+
+  athleteID = req.body.owner_id;
+  activityID = req.body.object_id;
+  if (await isAthleteRegistered(athleteID)) {
+    console.log("Athlete registered")
+    let athleteToken = await getAthleteToken(athleteID)
+    if (await isActivityInDatabase(activityID)) {
+      // Update activity
+      console.log("Activity already in database")
+    }
+    else {
+      // Create activity
+      console.log("Activity not in database")
+      // Get full detail activity
+      const config = {
+        headers: {
+          Authorization: `Bearer ${ athleteToken }`,
+        },
+      }; 
+      axios.get(`https://www.strava.com/api/v3/activities/${activityID}`, config).then(response => {
+        console.log("Response from API", response.data)
+        storeDetailedActivity(response.data);
+      })
+      .catch(error => {
+        console.log("Error while fetching activity details", error);
+      });
+    }
+  }
+  else {
+    console.log("Athlete not registered");
+  }
+}
 
 module.exports = router;
