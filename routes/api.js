@@ -7,6 +7,7 @@ router.get('/', function(req, res, next) {
     res.json({ message: "API is working properly" });
 });
 
+// Strava webhooks
 // Creates the endpoint for our webhook
 router.post('/webhook', (req, res) => {
     console.log("webhook event received!", req.query, req.body);
