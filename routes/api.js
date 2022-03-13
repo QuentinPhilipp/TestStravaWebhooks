@@ -1,7 +1,7 @@
 var express = require('express');
 require('dotenv').config();
 var router = express.Router();
-var { getAthleteToken, isAthleteRegistered, isActivityInDatabase, storeDetailedActivity } = require('./databaseConfig.js');
+var { getAthleteToken, isAthleteRegistered, isActivityInDatabase, storeDetailedActivity } = require('./databaseController.js');
 
 const axios = require('axios')
 
@@ -63,7 +63,6 @@ async function processCallback(req) {
         },
       }; 
       axios.get(`https://www.strava.com/api/v3/activities/${activityID}`, config).then(response => {
-        console.log("Response from API", response.data)
         storeDetailedActivity(response.data);
       })
       .catch(error => {

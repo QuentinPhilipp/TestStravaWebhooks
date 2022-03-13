@@ -1,7 +1,10 @@
 
-# Environment
+# Environment / Secrets
 .env
 
 # NodeJS / NPM
 node_modules
 package-lock.json
+
+# Raw data files
+streamdata

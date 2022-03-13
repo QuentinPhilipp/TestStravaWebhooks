@@ -2,7 +2,7 @@ var express = require('express');
 const axios = require('axios')
 require('dotenv').config();
 var router = express.Router();
-var { isAthleteRegistered, storeUser } = require('./databaseConfig.js');
+var { isAthleteRegistered, storeUser } = require('./databaseController.js');
 
 /* GET api calls. */
 router.get('/login', function(req, res, next) {
@@ -17,12 +17,9 @@ router.get('/login', function(req, res, next) {
 
 // Adds support for GET requests to our webhook
 router.get('/exchange_token', async (req, res) => {
-    console.log("Exchange token for auth")
-    console.log(req.query.code);
     if (req.query.scope.includes(process.env.AUTH_SCOPE)) {
         axios.post(`https://www.strava.com/api/v3/oauth/token?client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&code=${req.query.code}&grant_type=authorization_code`)
         .then(async function (response) {
-            console.log(response.data)
             // If user already exit, authenticate him
             // Else create the account and authenticate
             if (await isAthleteRegistered(response.data.athlete.id)) {
@@ -38,8 +35,8 @@ router.get('/exchange_token', async (req, res) => {
             }
          }) 
          .catch(error => {
-             console.log('Error to fetch data\n', error);
-             res.sendStatus(500);
+             console.log('Error when registering user\n', error);
+             res.status(500).send(error);
             })
 
     }
