@@ -1,5 +1,6 @@
 var mysql = require('mysql2/promise');
 const axios = require('axios')
+require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 
@@ -30,15 +31,49 @@ const isActivityInDatabase = async function(activityID) {
     return false;
 } 
 
-const getAthleteToken = async function(athleteId) {
+const getAthleteToken = async function(athleteID) {
     const connection = await mysql.createConnection(config);
     // get the athlete token from the db. If expired, need to refresh, return the new token and store it.
-    let activityQuery = "SELECT token, expires_at FROM access_tokens WHERE athleteID = ?"
+    let activityQuery = "SELECT access_tokens.athleteID, token, expires_at, access_tokens.scope, refresh_token FROM access_tokens INNER JOIN refresh_tokens ON access_tokens.athleteID=refresh_tokens.athleteID WHERE access_tokens.athleteID=?"
     const [rows, fields] = await connection.query(activityQuery, [athleteID]);
     if (rows.length == 1) {
+        const now = new Date();
+        if (rows[0].expires_at < now) {
+            console.log("Expired, need to refresh token")       
+            const params = {
+                client_id: process.env.CLIENT_ID,
+                client_secret: process.env.CLIENT_SECRET,
+                grant_type: 'refresh_token',
+                refresh_token: rows[0].refresh_token
+            }
+            // Refresh token
+            axios.post(`https://www.strava.com/oauth/token`, params).then(response => {
+                if (response.status == 200) {
+                    const access_token = response.data.access_token;
+                    const expires_at = response.data.expires_at;
+                    const refresh_token = response.data.refresh_token;
+                    updateAthleteTokens(athleteID, access_token, expires_at, refresh_token)
+                    return access_token;
+                }
+                else {
+                    console.log("Can't refresh token for athlete:", athleteID);
+                }
+            });
+        }
         return rows[0].token;
     }
     console.log("Error, token not found");
+}
+
+const updateAthleteTokens = async function(athleteID, token, expires_at, refresh_token) {
+    const connection = await mysql.createConnection(config);
+    let updateRefreshTokens = "UPDATE refresh_tokens SET refresh_token=? WHERE athleteID=?";
+    await connection.query(updateRefreshTokens, [refresh_token, athleteID]);
+
+    var expireDate = new Date(0); // The 0 there is the key, which sets the date to the epoch
+    expireDate.setUTCSeconds(expires_at);
+    let updateAccessTokens = "UPDATE access_tokens SET token=?, expires_at=? WHERE athleteID=?";
+    await connection.query(updateAccessTokens, [token, expireDate, athleteID]);
 }
 
 const writeStreams = async function(dataStreams, activityID, connection) {

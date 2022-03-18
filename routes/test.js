@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var { storeUser } = require('./databaseController.js');
+var { storeUser, getAthleteToken } = require('./databaseController.js');
 
 router.post('/add-user', async function(req, res) {
     var athlete = {
@@ -29,5 +29,12 @@ router.post('/add-user', async function(req, res) {
         res.sendStatus(500);
     }
 });
+
+router.get('/user', async function (req, res) {
+    var userId = req.body.userId;
+    const result = await getAthleteToken(userId);
+    console.log(result);
+    res.sendStatus(200);
+})
 
 module.exports = router;
