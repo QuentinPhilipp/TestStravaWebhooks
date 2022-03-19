@@ -47,12 +47,13 @@ const getAthleteToken = async function(athleteID) {
                 refresh_token: rows[0].refresh_token
             }
             // Refresh token
-            axios.post(`https://www.strava.com/oauth/token`, params).then(response => {
+            axios.post(`https://www.strava.com/oauth/token`, params).then(async (response) => {
                 if (response.status == 200) {
                     const access_token = response.data.access_token;
                     const expires_at = response.data.expires_at;
                     const refresh_token = response.data.refresh_token;
                     await updateAthleteTokens(athleteID, access_token, expires_at, refresh_token)
+                    console.log("Returned new token", access_token);
                     return access_token;
                 }
                 else {
@@ -61,6 +62,7 @@ const getAthleteToken = async function(athleteID) {
             });
         }
         else {
+            console.log("Returned old token:", rows[0].token);
             return rows[0].token;
         }
     }
@@ -190,6 +192,7 @@ const storeDetailedActivity = async function(detailedActivity) {
         },
       };
 
+    console.log('Get streams with token: ' +athleteToken);
     // Get streams for activity
     axios.get(`https://www.strava.com/api/v3/activities/${detailedActivity.id}/streams?keys=watts,heartrate,altitude`, stravaConfig).then(response => {
         writeStreams(response.data, detailedActivity.id, connection);
