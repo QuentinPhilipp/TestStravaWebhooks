@@ -47,19 +47,19 @@ const getAthleteToken = async function(athleteID) {
                 refresh_token: rows[0].refresh_token
             }
             // Refresh token
-            axios.post(`https://www.strava.com/oauth/token`, params).then(async (response) => {
-                if (response.status == 200) {
-                    const access_token = response.data.access_token;
-                    const expires_at = response.data.expires_at;
-                    const refresh_token = response.data.refresh_token;
-                    await updateAthleteTokens(athleteID, access_token, expires_at, refresh_token)
-                    console.log("Returned new token", access_token);
-                    return access_token;
-                }
-                else {
-                    console.log("Can't refresh token for athlete:", athleteID);
-                }
-            });
+            const response = await axios.post(`https://www.strava.com/oauth/token`, params)
+            if (response.status == 200) {
+                const access_token = response.data.access_token;
+                const expires_at = response.data.expires_at;
+                const refresh_token = response.data.refresh_token;
+                updateAthleteTokens(athleteID, access_token, expires_at, refresh_token)
+                console.log("Returned new token", access_token);
+                return access_token;
+            }
+            else {
+                console.log("Can't refresh token for athlete:", athleteID);
+                return 0;
+            }
         }
         else {
             console.log("Returned old token:", rows[0].token);
@@ -67,6 +67,7 @@ const getAthleteToken = async function(athleteID) {
         }
     }
     console.log("Error, token not found");
+    return 0;
 }
 
 const updateAthleteTokens = async function(athleteID, token, expires_at, refresh_token) {
