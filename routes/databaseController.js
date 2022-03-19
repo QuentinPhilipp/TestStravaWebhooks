@@ -52,7 +52,7 @@ const getAthleteToken = async function(athleteID) {
                     const access_token = response.data.access_token;
                     const expires_at = response.data.expires_at;
                     const refresh_token = response.data.refresh_token;
-                    updateAthleteTokens(athleteID, access_token, expires_at, refresh_token)
+                    await updateAthleteTokens(athleteID, access_token, expires_at, refresh_token)
                     return access_token;
                 }
                 else {
@@ -60,7 +60,9 @@ const getAthleteToken = async function(athleteID) {
                 }
             });
         }
-        return rows[0].token;
+        else {
+            return rows[0].token;
+        }
     }
     console.log("Error, token not found");
 }
