@@ -34,7 +34,7 @@ router.get('/user', async function (req, res) {
     var userId = req.body.userId;
     const result = await getAthleteToken(userId);
     console.log(result);
-    res.sendStatus(200);
+    res.status(200).send(result);
 })
 
 module.exports = router;
