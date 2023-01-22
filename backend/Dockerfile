@@ -1,12 +1,13 @@
-FROM node:17
+FROM node:16
 
 # Create app directory
 WORKDIR /usr/src/app
 COPY package*.json ./
+COPY tsconfig*.json ./
 
 RUN npm install
 
-COPY . .
+COPY ./src ./src
 
 EXPOSE 8080
 
