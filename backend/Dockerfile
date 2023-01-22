@@ -4,7 +4,7 @@ FROM node:16
 WORKDIR /usr/src/app
 COPY package*.json ./
 COPY tsconfig*.json ./
-COPY npm-install-low-memory.sh ./
+COPY --chmod=777 npm-install-low-memory.sh ./
 
 RUN ./npm-install-low-memory.sh
 
