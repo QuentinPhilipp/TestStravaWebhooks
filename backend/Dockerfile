@@ -10,6 +10,4 @@ RUN ./npm-install-low-memory.sh
 
 COPY ./src ./src
 
-EXPOSE 8080
-
 CMD ["npm", "start"]

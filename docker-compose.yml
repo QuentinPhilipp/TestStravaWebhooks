@@ -4,7 +4,7 @@ services:
     restart: on-failure
     build: ./backend
     ports:
-      - '81:5000'
+      - '81:3000'
   nginx:
     build: ./nginx
     ports:
