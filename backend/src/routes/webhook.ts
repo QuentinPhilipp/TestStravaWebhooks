@@ -9,6 +9,7 @@ webhookRoute.get('/', (req, res) => {
     // Your verify token. Should be a random string.
     console.log("registering webhook")
     const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
+    console.log("VERIFY_TOKEN", VERIFY_TOKEN);
     // Parses the query params
     let mode = req.query['hub.mode'];
     let token = req.query['hub.verify_token'];
@@ -25,6 +26,9 @@ webhookRoute.get('/', (req, res) => {
         // Responds with '403 Forbidden' if verify tokens do not match
         res.sendStatus(403);      
       }
+    }
+    else {
+      res.sendStatus(404);
     }
   });
 
