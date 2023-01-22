@@ -47,7 +47,8 @@ async function processCallback (req): Promise<void> {
   if (type === 'activity') {
     const activityID: string = req.body.object_id;  
     logger.info(`register webhook for activityID: ${activityID}`);
-    const docRef = firestore.collection('activities').doc(activityID.toString());
+    const database_id = `${activityID}_${Date.now()}`
+    const docRef = firestore.collection('raw_activities').doc(database_id);
     await docRef.set(req.body);
   }
 }
