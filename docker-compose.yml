@@ -2,7 +2,7 @@ version: '3.9'
 services:
   backend:
     restart: on-failure
-    build: ./backend
+    build: ./serializer
     ports:
       - '81:3000'
     env_file:
