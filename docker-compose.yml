@@ -1,8 +1,8 @@
 version: '3.9'
 services:
-  web:
+  backend:
     restart: on-failure
-    build: ./web1
+    build: ./backend
     ports:
       - '81:5000'
   nginx:
@@ -10,4 +10,4 @@ services:
     ports:
     - '80:80'
     depends_on:
-    - web
+    - backend
