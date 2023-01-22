@@ -20,6 +20,7 @@ app.get('/', (req, res) => {
 })
 
 app.listen(port, () => {
-  console.log(`Express is listening at http://localhost:${port}`)
+  const CLIENT_ID = process.env.CLIENT_ID;
+  console.log(`Express is listening at http://localhost:${port} Strava APP: ${CLIENT_ID}`)
 })
 
