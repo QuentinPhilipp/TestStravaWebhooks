@@ -5,6 +5,8 @@ services:
     build: ./backend
     ports:
       - '81:3000'
+    env_file:
+      - .env
   nginx:
     build: ./nginx
     ports:
