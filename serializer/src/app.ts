@@ -5,7 +5,7 @@ import logger from './logger';
 
 const app = express()
 dotenv.config()
-const port = 3000
+const port = 3002
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
@@ -38,7 +38,6 @@ app.get('/', (req, res) => {
   }
 });
 
-
 // Strava webhooks
 // Creates the endpoint for our webhook
 app.post('/', (req, res) => {
@@ -60,6 +59,6 @@ if (type === 'activity') {
 }
 app.listen(port, () => {
   const CLIENT_ID = process.env.CLIENT_ID;
-  console.log(`Express is listening at http://localhost:${port} Strava APP: ${CLIENT_ID}`)
+  console.log(`Webhook service is listening at http://localhost:${port} Strava APP: ${CLIENT_ID}`)
 })
 

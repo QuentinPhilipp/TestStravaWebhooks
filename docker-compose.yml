@@ -4,14 +4,14 @@ services:
     restart: on-failure
     build: ./serializer
     ports:
-      - '81:3000'
+      - '3002:3002'
     env_file:
       - .env
   auth: 
     restart: on-failure
     build: ./auth
     ports:
-      - '82:3000'
+      - '3001:3001'
     env_file:
       - .env
   nginx:
