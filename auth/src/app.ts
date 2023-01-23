@@ -6,7 +6,7 @@ import axios from 'axios'
 
 const app = express()
 dotenv.config({ path: '../.env' })
-const port = 3000
+const port = 3001
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
@@ -73,6 +73,6 @@ app.get('/exchange_token', async (req, res) => {
 
 app.listen(port, () => {
   const CLIENT_ID = process.env.CLIENT_ID;
-  console.log(`Express is listening at http://localhost:${port} Strava APP: ${CLIENT_ID}`)
+  console.log(`Auth service is listening at http://localhost:${port} Strava APP: ${CLIENT_ID}`)
 })
 
